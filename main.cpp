@@ -158,12 +158,12 @@ int main()
 {
     //Setting up the path
     preparePath();
-  
+
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
 
     SDL_Window *window = SDL_CreateWindow(":3 UwU XD SillyWindow", 0, 0, SCR_WIDTH, SCR_HEIGHT, SDL_WINDOW_OPENGL);
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-    float startTime = SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+    long long startTick = SDL_GetPerformanceCounter();
 
     //checks that the new window isnt null, if it is then it will terminate with an error
     if (window == NULL)
@@ -307,7 +307,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //gets the deltaTime using differing times & frames
-        float currentFrame = SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+        float currentFrame = ((double)(SDL_GetPerformanceCounter() - startTick)) / ((double)SDL_GetPerformanceFrequency());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
@@ -326,6 +326,13 @@ int main()
         
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
+        //std::cout << "SDL_GetPerformanceCounter() << " " << startTick" << std::endl;
+        //std::cout << SDL_GetPerformanceCounter() << " " << startTick << std::endl;
+        //std::cout << SDL_GetPerformanceCounter() - startTick << " " << SDL_GetPerformanceFrequency() << std::endl;
+        //std::cout << (double)(SDL_GetPerformanceCounter() - startTick) << " " << (double)SDL_GetPerformanceFrequency() << std::endl;
+        //std::cout << ((double)(SDL_GetPerformanceCounter() - startTick)) / ((double)SDL_GetPerformanceFrequency()) << std::endl;
+        //std::cout << ((double)(SDL_GetPerformanceCounter() - startTick)) / ((double)SDL_GetPerformanceFrequency()) + extraTime << std::endl;
+        //std::cout << (float)(((double)(SDL_GetPerformanceCounter() - startTick)) / ((double)SDL_GetPerformanceFrequency()) + extraTime) << std::endl;
         
         //model render loop
         for (unsigned int i = 0; i < 10; i++) {
@@ -341,7 +348,7 @@ int main()
 
 
             //rotates the local space by 50 rads over time
-            model = glm::rotate(model, ((float)(SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency() - startTime) + extraTime) * glm::radians(deltaRotatedAngle), glm::vec3(0.5f, 1.0f, 0.0f));
+            model = glm::rotate(model, (float)(((double)(SDL_GetPerformanceCounter() - startTick)) / ((double)SDL_GetPerformanceFrequency()) + extraTime) * glm::radians(deltaRotatedAngle), glm::vec3(0.5f, 1.0f, 0.0f));
 
             ourShader.setMat4("model", model);
 
