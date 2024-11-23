@@ -366,7 +366,7 @@ int main()
               case SDL_MOUSEWHEEL:
                 scroll_callback(window, event.wheel.x, event.wheel.y);
                 break;
-              case SDL_KEYUP:
+              case SDL_MOUSEMOTION:
                 mouse_callback(window, event.motion.x, event.motion.y);
                 break;
               case SDL_QUIT:
