@@ -282,8 +282,10 @@ int main()
     
     // these look like one off kind of things (surely you don't have to reregister the callbacks every frame right?) (moved from processInput)
     //disables visible cursor capture
-    SDL_ShowCursor(SDL_DISABLE);
-    SDL_SetWindowGrab(window, SDL_TRUE);
+    // i can't figure out how to do it in sdl :(
+    //SDL_SetWindowGrab(window, SDL_TRUE);
+    //SDL_SetRelativeMouseMode(SDL_TRUE);
+    //SDL_ShowCursor(SDL_ENABLE);
 
     //sets & binds each of the textures
     glActiveTexture(GL_TEXTURE0);
@@ -377,6 +379,9 @@ int main()
                 break;
             }
         }
+    
+        // it triggers mouse events :(
+        //SDL_WarpMouseInWindow(window, SCR_WIDTH/2, SCR_HEIGHT/2);
     }
     //delete the unused arrays
     glDeleteVertexArrays(1, &VAO);
@@ -396,8 +401,9 @@ void processInput(SDL_Window *window) {
     //right normalized vector
     glm::vec3 rightDirectionVector = glm::normalize(glm::cross(cameraFront, cameraUp));
     //if esc is pressed then close the window
-    if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_ESCAPE] == 1)
+    if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_ESCAPE] == 1) {
         closed = true;
+    }
     if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_1] == 1) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
