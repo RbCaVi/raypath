@@ -54,7 +54,6 @@ float lastFrame = 0.0f;
 //direction for the rotation
 float yaw = -90.0f;
 float pitch = 0.0f;
-//bool firstMouse = true; // not used?
 float fov = 45.0f;
 
 
@@ -126,15 +125,6 @@ glm::vec3 cubePositions[] = {
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-//--glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-//--glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-//--glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
-
-/* float texCoords[] = {
-    0.0f, 0.0f,
-    1.0f, 0.0f,
-    0.5f, 1.0f
-}; */
 
 // time warp
 float extraTime = 0.0f;
@@ -228,9 +218,6 @@ int main()
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    //--glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    //--glEnableVertexAttribArray(2);
 
 
     //textures
@@ -387,7 +374,6 @@ int main()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO); // does this need to be freed?
-    //glDeleteProgram(shaderProgram); // shaderProgram is never initialized
 
     //ends the glfw library
     SDL_Quit();
