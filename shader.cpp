@@ -47,20 +47,20 @@ unsigned int compileShader(const char* vertexSource, const char* fragmentSource)
 	}
 
 	// link the shader program
-	unsigned int ID = glCreateProgram();
-	glAttachShader(ID, vertex);
-	glAttachShader(ID, fragment);
-	glLinkProgram(ID);
+	unsigned int shader = glCreateProgram();
+	glAttachShader(shader, vertex);
+	glAttachShader(shader, fragment);
+	glLinkProgram(shader);
 
 	// check for errors
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	glGetProgramiv(shader, GL_LINK_STATUS, &success);
 	if (!success) {
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED" << std::endl;
 		int loglength;
-		glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &loglength);
+		glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &loglength);
 		if (loglength > 0) {
 			char *infolog = (char*)malloc(loglength);
-			glGetProgramInfoLog(ID, loglength, NULL, infolog);
+			glGetProgramInfoLog(shader, loglength, NULL, infolog);
 			std::cout << infolog << std::endl;
 			free(infolog);
 		}
@@ -69,12 +69,7 @@ unsigned int compileShader(const char* vertexSource, const char* fragmentSource)
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
-	return ID;
-}
-//use/activate the shader
-void Shader::use()
-{
-	glUseProgram(ID);
+	return shader;
 }
 
 // utility uniform functions
