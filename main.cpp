@@ -22,7 +22,7 @@ const char *loadFile(std::filesystem::path &filepath) {
     // get the source code from filepath
     std::string content;
     std::ifstream file;
-    //ensures ifstream object can throw exceptions
+    // ensures ifstream object can throw exceptions
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
         std::stringstream stream;
@@ -31,6 +31,7 @@ const char *loadFile(std::filesystem::path &filepath) {
         stream << file.rdbuf();
         file.close();
 
+        // the strdup is to stop the string from disappearing when the stream is destroyed
         return strdup(stream.str().c_str());
     } catch (std::ifstream::failure *e) {
         std::cout << "ERROR::FILE::NOT_SUCCESFULLY_READ" << std::endl;
@@ -81,7 +82,7 @@ int main()
 
     // Vertex Buffer Object (stores GPU memory for the vertex shader)
     unsigned int VBO;
-    // generate a vertex buffer and bind it to GL_ARRAY_BUFFER
+    // generate a vertex buffer handle and bind it to GL_ARRAY_BUFFER
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -104,7 +105,7 @@ int main()
     while (!closed)
     {
         double currentFrame = ((double)(SDL_GetPerformanceCounter() - startTick)) / SDL_GetPerformanceFrequency();
-        double deltaTime = currentFrame - lastFrame;
+        //double deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         // swap the rendered buffer with the next image render buffer
