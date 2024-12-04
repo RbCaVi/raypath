@@ -35,10 +35,9 @@ Shader::Shader(const char* vShaderCode, const char* fShaderCode)
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, &fShaderCode, NULL);
 	glCompileShader(fragment);
-	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 	//frag compile errors
-	if (!success)
-	{
+	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+	if (!success) {
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n";
 		int loglength;
 		glGetShaderiv(fragment, GL_INFO_LOG_LENGTH, &loglength);
