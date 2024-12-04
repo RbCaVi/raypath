@@ -9,7 +9,7 @@
 #include <exception>
 
 // (x, y) vertices for a square
-float vertices[] = {
+const float vertices[] = {
     -1.0f, -1.0f,
      1.0f, -1.0f,
      1.0f,  1.0f,
@@ -40,8 +40,6 @@ const char *loadFile(std::filesystem::path &filepath) {
 
 int main()
 {
-    //Vertex Buffer Object (stores GPU memory for the vertex shader)
-    unsigned int VBO;
 
     // Setting up the paths
     std::filesystem::path currentPath = std::filesystem::current_path();
@@ -75,64 +73,54 @@ int main()
         return -1;
     }
 
-    //sets the gl viewport (normalized for -1 to 1)
+    // set the gl viewport (in gl, these are normalized to -1 to 1)
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-    //gets the max vertex attributes attributed to each shader
-    int nrAttributes;
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-    std::cout << "max num of vertex attributes supported: " << nrAttributes << std::endl;
+    // compile the shader
+    unsigned int shader = compileShader(loadFile(vertexPath), loadFile(fragPath));
 
-    //compiles the shader
-
-    std::cout << loadFile(vertexPath) << loadFile(fragPath) << std::endl;
-    Shader ourShader(loadFile(vertexPath), loadFile(fragPath));
-
-    //Generates a vertex buffer, setting VBO as an id to it
+    // Vertex Buffer Object (stores GPU memory for the vertex shader)
+    unsigned int VBO;
+    // generate a vertex buffer and bind it to GL_ARRAY_BUFFER
     glGenBuffers(1, &VBO);
-
-    //binds the array buffer to the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-
-    //loads the vertices data into the buffer for the gpu to use
+    // load the vertices data into the buffer for the gpu to use
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    //sets the proper attributes for the vertex data
+    // tell the gpu how the data is arranged
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    //enables vertex attributes
+    // enables vertex attributes (???)
     glEnableVertexAttribArray(0);
 
-    ourShader.use();
-
-    //Enables the Z-BUFFER
-    glEnable(GL_DEPTH_TEST);
+    glUseProgram(shader);
 
     // if the window should close... NOW!
     bool closed = false;
 
     //the render loop
+    const long long startTick = SDL_GetPerformanceCounter();
+    double lastFrame = 0;
     while (!closed)
     {
-        //swaps the rendered buffer with the next image render buffer
+        double currentFrame = ((double)(SDL_GetPerformanceCounter() - startTick)) / SDL_GetPerformanceFrequency();
+        double deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        // swap the rendered buffer with the next image render buffer
         SDL_GL_SwapWindow(window);
-        //rendering commands
-        //sets the back color of the toberendered buffer to the rgba values
-        glClearColor(0.4f, 0.3f, 0.5f, 1.0f);
-        //clears it to the the color buffer (i.e. the clear color setting) & uses the z-buffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //uses the program
-        ourShader.use();
-
+        // rendering command
+        // no clear or z buffer because it redraws the whole screen anyway
+        setFloat(shader, "time", currentFrame);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         SDL_Event event;
 
-        //checks if any events were triggered (i.e. input from kb&m)
+        // check if any events were triggered
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-              case SDL_QUIT:
+              case SDL_QUIT: // x button
                 closed = true;
                 break;
               default:
@@ -140,15 +128,16 @@ int main()
             }
         }
 
-        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_ESCAPE] == 1) {
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_ESCAPE] == 1) { // if escape is pressed, quit
             closed = true;
         }
     }
-    //delete the unused arrays
+    // delete VBO because we're done with it
     glDeleteBuffers(1, &VBO);
 
-    //ends the sdl library
+    // quit the sdl library
     SDL_GL_DeleteContext(gl_context);
     SDL_Quit();
+
     return 0;
 }
