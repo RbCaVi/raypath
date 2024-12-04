@@ -30,16 +30,6 @@ public:
 	void setMat2(const std::string& name, const glm::mat2& mat) const;
 	void setMat3(const std::string& name, const glm::mat3& mat) const;
 	void setMat4(const std::string& name, const glm::mat4& mat) const;
-	
-	bool getBool(const std::string& name);
-	int getInt(const std::string& name);
-	float getFloat(const std::string& name);
-	glm::vec2 getVec2(const std::string& name);
-	glm::vec3 getVec3(const std::string& name);
-	glm::vec4 getVec4(const std::string& name);
-	glm::mat2 getMat2(const std::string& name);
-	glm::mat3 getMat3(const std::string& name);
-	glm::mat4 getMat4(const std::string& name);
 };
 
 #endif // !SHADER_H
