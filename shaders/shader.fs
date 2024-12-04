@@ -1,7 +1,7 @@
 #version 130
 uniform float time;
 
-varying vec2 posout;
+varying vec2 pos;
 
 void main()
 {
