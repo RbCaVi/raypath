@@ -4,6 +4,9 @@
 #include <iostream>
 #include "shader.h"
 #include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <exception>
 
 // (x, y) vertices for a square
 float vertices[] = {
@@ -14,6 +17,26 @@ float vertices[] = {
     -1.0f,  1.0f,
     -1.0f, -1.0f,
 };
+
+const char *loadFile(std::filesystem::path &filepath) {
+    // get the source code from filepath
+    std::string content;
+    std::ifstream file;
+    //ensures ifstream object can throw exceptions
+    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try {
+        std::stringstream stream;
+
+        file.open(filepath);
+        stream << file.rdbuf();
+        file.close();
+
+        return strdup(stream.str().c_str());
+    } catch (std::ifstream::failure *e) {
+        std::cout << "ERROR::FILE::NOT_SUCCESFULLY_READ" << std::endl;
+        throw e;
+    }
+}
 
 int main()
 {
@@ -62,7 +85,8 @@ int main()
 
     //compiles the shader
 
-    Shader ourShader(vertexPath.c_str(), fragPath.c_str());
+    std::cout << loadFile(vertexPath) << loadFile(fragPath) << std::endl;
+    Shader ourShader(loadFile(vertexPath), loadFile(fragPath));
 
     //Generates a vertex buffer, setting VBO as an id to it
     glGenBuffers(1, &VBO);

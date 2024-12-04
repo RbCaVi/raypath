@@ -1,45 +1,11 @@
 #include "shader.h"
 
 #include <glad/glad.h>
-
-#include <fstream>
-#include <sstream>
 #include <iostream>
 
 //constructer to build & read the shader
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* vShaderCode, const char* fShaderCode)
 {
-	//retrives the vertex/fragment source code from filepath
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	//ensures ifstream objects can throw exceptions
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try
-	{
-		//opens the files
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-		//read file's buffer content into the streams
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		//closes the files
-		vShaderFile.close();
-		fShaderFile.close();
-		//convert stream into text
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	}
-	catch (std::ifstream::failure&) {
-		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-	}
-
-	const char* vShaderCode = vertexCode.c_str();
-	const char* fShaderCode = fragmentCode.c_str();
-
 	//compile shaders
 
 	unsigned int vertex, fragment;
