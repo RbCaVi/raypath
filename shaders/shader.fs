@@ -19,7 +19,7 @@ struct hit {
     vec3 color;
 };
 
-hit raytrace(vec3 raypos, vec3 raydir) {
+hit pathtrace(vec3 raypos, vec3 raydir) {
 
     // plane intersection
     vec3 planecenter = vec3(0.0, 0.0, 3.0);
@@ -54,7 +54,7 @@ hit raytrace(vec3 raypos, vec3 raydir) {
     return hit(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));
 }
 
-hit raytrace2(vec3 raypos, vec3 raydir) {
+hit pathtrace2(vec3 raypos, vec3 raydir) {
 
     // plane intersection
     vec3 planecenter = vec3(3.0, 3.0, 3.0);
@@ -134,7 +134,7 @@ void main()
     for(int i = 0; i < samples; i++) {
         vec2 tpos = pos + vec2(rand(pos + vec2(time, i)), rand(pos + vec2(time + 1, i * 2))) / vec2(width, height) * 4; // * 2 makes less blurring but maybe more aliasing? (not sure)
         vec3 raydir = vec3(tpos, 1.0) * orientation;
-        color += get_color(merge_hits(raytrace(raypos, raydir), raytrace2(raypos, raydir)));
+        color += get_color(merge_hits(pathtrace(raypos, raydir), pathtrace2(raypos, raydir)));
     }
 
     gl_FragColor = vec4(color * invsamples, 0.5);
