@@ -1,8 +1,9 @@
 #version 130
-uniform float time;
 
 uniform float width;
 uniform float height;
+
+uniform mat3 camera;
 
 varying vec2 pos;
 
@@ -156,25 +157,12 @@ void main()
     vec3 campos = vec3(0.0, 0.0, 0.0);
 
     vec3 color = vec3(0.0);
-    
-    vec3 front = vec3(0.0, 0.0, 1.0);
-    vec3 up = vec3(0.0, 1.0, 0.0);
-    vec3 right = vec3(1.0, 0.0, 0.0);
-    mat3 orientation = mat3(right, up, front) * mat3(
-        cos(time), sin(time), 0.0,
-        -sin(time), cos(time), 0.0,
-        0.0, 0.0, 1.0
-    ) * mat3(
-        cos(pi/3), 0.0, sin(pi/3),
-        0.0, 1.0, 0.0,
-        -sin(pi/3), 0.0, cos(pi/3)
-    );
 
     int samples = 10;
     float invsamples = 1.0 / samples;
     for(int i = 0; i < samples; i++) {
         vec2 tpos = pos + vec2(rand(pos + vec2(time, i)), rand(pos + vec2(time + 1, i * 2))) / vec2(width, height) * 4; // * 2 makes less blurring but maybe more aliasing? (not sure)
-        vec3 raydir = vec3(tpos, 1.0) * orientation;
+        vec3 raydir = vec3(tpos, 1.0) * camera;
         ray r = ray(campos, raydir);
         color += get_color(merge_hits(pathtrace(r), merge_hits(pathtrace2(r), pathtrace3(r))));
     }

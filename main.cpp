@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <exception>
+#include <glm/glm.hpp>
 
 // (x, y) vertices for a square
 const float vertices[] = {
@@ -102,6 +103,11 @@ int main()
     setFloat(shader, "width", SCR_WIDTH);
     setFloat(shader, "height", SCR_HEIGHT);
 
+    glm::vec3 front = glm::vec3(0.0, 0.0, 1.0);
+    glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+    glm::vec3 right = glm::vec3(1.0, 0.0, 0.0);
+    glm::mat3 defaultcamera = glm::mat3(right, up, front);
+
     //the render loop
     const long long startTick = SDL_GetPerformanceCounter();
     double lastFrame = 0;
@@ -116,7 +122,17 @@ int main()
 
         // rendering command
         // no clear or z buffer because it redraws the whole screen anyway
-        setFloat(shader, "time", currentFrame);
+        // set the camera transformation matrix
+        setMat(shader, "camera", defaultcamera * glm::mat3(
+            cos(currentFrame), sin(currentFrame), 0.0,
+            -sin(currentFrame), cos(currentFrame), 0.0,
+            0.0, 0.0, 1.0
+        ) * mat3(
+            cos(pi/3), 0.0, sin(pi/3),
+            0.0, 1.0, 0.0,
+            -sin(pi/3), 0.0, cos(pi/3)
+        ));
+        // draw over the whole screen
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         SDL_Event event;
