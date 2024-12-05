@@ -51,7 +51,7 @@ int main()
 
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
 
-    unsigned int SCR_WIDTH = 800, SCR_HEIGHT = 800;
+    const unsigned int SCR_WIDTH = 800, SCR_HEIGHT = 800;
     SDL_Window *window = SDL_CreateWindow(":3 UwU XD SillyWindow", 0, 0, SCR_WIDTH, SCR_HEIGHT, SDL_WINDOW_OPENGL);
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
 
@@ -107,6 +107,15 @@ int main()
     glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
     glm::vec3 right = glm::vec3(1.0, 0.0, 0.0);
     glm::mat3 defaultcamera = glm::mat3(right, up, front);
+    
+    const int dtlen = 20;
+    double dts[dtlen];
+    
+    for (int i = 0; i < dtlen; i++) {
+        dts[i] = 0.0;
+    }
+    
+    int dti = 0;
 
     //the render loop
     const long long startTick = SDL_GetPerformanceCounter();
@@ -114,8 +123,18 @@ int main()
     while (!closed)
     {
         double currentFrame = ((double)(SDL_GetPerformanceCounter() - startTick)) / SDL_GetPerformanceFrequency();
-        //double deltaTime = currentFrame - lastFrame;
+        double deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        
+        dts[dti] = deltaTime;
+        dti += 1;
+        dti %= dtlen;
+        
+        double totdt = 0.0;
+        
+        for (int i = 0; i < dtlen; i++) {
+            totdt += dts[i];
+        }
 
         // swap the rendered buffer with the next image render buffer
         SDL_GL_SwapWindow(window);
@@ -132,6 +151,8 @@ int main()
             0.0, 1.0, 0.0,
             -sin(pi/3), 0.0, cos(pi/3)
         ));
+        // fps meter
+        setFloat(shader, "fps", 1.0 / (totfps / dtlen));
         // draw over the whole screen
         glDrawArrays(GL_TRIANGLES, 0, 6);
 

@@ -3,6 +3,7 @@
 uniform float width;
 uniform float height;
 
+uniform float fps;
 uniform mat3 camera;
 
 varying vec2 pos;
@@ -151,8 +152,26 @@ hit merge_hits(hit h1, hit h2) {
     return h1;
 }
 
+// https://gist.github.com/companje/29408948f1e8be54dd5733a74ca49bb9
+float map(float value, float min1, float max1, float min2, float max2) {
+  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+}
+
 void main()
 {
+    if (pos.x > 0.9) {
+        float top = map(fps, 0.0, 120.0, -1.0, 1.0);
+        if (pos.y < top) {
+            if (pos.y < -0.5) {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            } else if (pos.y < 0.0) {
+                gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+            } else {
+                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+            }
+            return;
+        }
+    }
     float pi = 3.14159;
     vec3 campos = vec3(0.0, 0.0, 0.0);
 
@@ -167,5 +186,5 @@ void main()
         color += get_color(merge_hits(pathtrace(r), merge_hits(pathtrace2(r), pathtrace3(r))));
     }
 
-    gl_FragColor = vec4(color * invsamples, 0.5);
+    gl_FragColor = vec4(color * invsamples, 1.0);
 }
