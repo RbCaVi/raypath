@@ -19,8 +19,16 @@ struct hit {
     vec3 color;
 };
 
-hit pathtrace(vec3 raypos, vec3 raydir) {
+struct ray {
+    vec3 pos;
+    vec3 dir;
+};
 
+vec3 at(ray r, float t) {
+    return r.pos + r.dir * t;
+}
+
+hit pathtrace(ray r) {
     // plane intersection
     vec3 planecenter = vec3(0.0, 0.0, 3.0);
     vec3 planev1 = vec3(1.0, 0.0, 0.0);
@@ -31,19 +39,19 @@ hit pathtrace(vec3 raypos, vec3 raydir) {
     vec3 Q = planecenter;
     float D = dot(normal, Q);
 
-    float denom = dot(normal, raydir);
+    float denom = dot(normal, r.dir);
 
     if (abs(denom) < 1e-8) {
         return hit(-1, vec3(0.0));
     }
 
-    float t = (D - dot(normal, raypos)) / denom;
+    float t = (D - dot(normal, r.pos)) / denom;
 
     if (t < 0) {
         return hit(-1, vec3(0.0));
     }
 
-    vec3 intersection = raypos + raydir * t;
+    vec3 intersection = at(r, t);
     vec3 w = n / dot(n,n);
 
     vec3 P = intersection;
@@ -54,8 +62,7 @@ hit pathtrace(vec3 raypos, vec3 raydir) {
     return hit(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));
 }
 
-hit pathtrace2(vec3 raypos, vec3 raydir) {
-
+hit pathtrace2(ray r) {
     // plane intersection
     vec3 planecenter = vec3(3.0, 3.0, 3.0);
     vec3 planev1 = vec3(0.0, -1.0, 1.0);
@@ -66,19 +73,19 @@ hit pathtrace2(vec3 raypos, vec3 raydir) {
     vec3 Q = planecenter;
     float D = dot(normal, Q);
 
-    float denom = dot(normal, raydir);
+    float denom = dot(normal, r.dir);
 
     if (abs(denom) < 1e-8) {
         return hit(-1, vec3(0.0));
     }
 
-    float t = (D - dot(normal, raypos)) / denom;
+    float t = (D - dot(normal, r.pos)) / denom;
 
     if (t < 0) {
         return hit(-1, vec3(0.0));
     }
 
-    vec3 intersection = raypos + raydir * t;
+    vec3 intersection = at(r, t);
     vec3 w = n / dot(n,n);
 
     vec3 P = intersection;
@@ -112,7 +119,7 @@ hit merge_hits(hit h1, hit h2) {
 void main()
 {
     float pi = 3.14159;
-    vec3 raypos = vec3(0.0, 0.0, 0.0);
+    vec3 campos = vec3(0.0, 0.0, 0.0);
 
     vec3 color = vec3(0.0);
     
@@ -134,7 +141,8 @@ void main()
     for(int i = 0; i < samples; i++) {
         vec2 tpos = pos + vec2(rand(pos + vec2(time, i)), rand(pos + vec2(time + 1, i * 2))) / vec2(width, height) * 4; // * 2 makes less blurring but maybe more aliasing? (not sure)
         vec3 raydir = vec3(tpos, 1.0) * orientation;
-        color += get_color(merge_hits(pathtrace(raypos, raydir), pathtrace2(raypos, raydir)));
+        ray r = ray(campos, raydir);
+        color += get_color(merge_hits(pathtrace(r), pathtrace2(r)));
     }
 
     gl_FragColor = vec4(color * invsamples, 0.5);
