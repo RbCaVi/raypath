@@ -99,6 +99,9 @@ int main()
     // if the window should close... NOW!
     bool closed = false;
 
+    setFloat(shader, "width", SCR_WIDTH);
+    setFloat(shader, "height", SCR_HEIGHT);
+
     //the render loop
     const long long startTick = SDL_GetPerformanceCounter();
     double lastFrame = 0;
