@@ -96,6 +96,40 @@ hit pathtrace2(ray r) {
     return hit(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));
 }
 
+hit pathtrace3(ray r) {
+    vec3 center = vec3(0.0, 0.0, 2.0);
+    float radius = 0.5;
+    
+    vec3 oc = center - r.pos;
+    auto a = dot(r.dir, r.dir);
+    auto h = dot(r.dir, oc);
+    auto c = dot(oc, oc) - radius*radius;
+    auto d = h*h - a*c;
+
+    if (d < 0) {
+        return hit(-1.0, vec3(0.0));
+    }
+
+    float ainv = 1.0 / a;
+    float sqrtd_a = sqrt(d) * ainv;
+    float h_a = h * ainv;
+
+    if (h_a < -sqrtd_a) {
+        // neither the h - sqrtd nor the h + sqrtd solutions will work
+        return hit(-1.0, vec3(0.0));
+    }
+
+    float t;
+    if (h_a < sqrtd_a) {
+        // the "close" solution is behind the ray origin
+        t = h_a + sqrtd_a;
+    } else {
+        t = h_a - sqrtd_a;
+    }
+
+    return hit(t, ((center - at(r, t)) / radius) * 0.5 + 0.5);
+}
+
 vec3 get_color(hit p) {
     if (p.dist < 0.0) {
         return bg();
@@ -142,7 +176,7 @@ void main()
         vec2 tpos = pos + vec2(rand(pos + vec2(time, i)), rand(pos + vec2(time + 1, i * 2))) / vec2(width, height) * 4; // * 2 makes less blurring but maybe more aliasing? (not sure)
         vec3 raydir = vec3(tpos, 1.0) * orientation;
         ray r = ray(campos, raydir);
-        color += get_color(merge_hits(pathtrace(r), pathtrace2(r)));
+        color += get_color(merge_hits(pathtrace(r), merge_hits(pathtrace2(r), pathtrace3(r))));
     }
 
     gl_FragColor = vec4(color * invsamples, 0.5);
