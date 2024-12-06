@@ -173,6 +173,18 @@ void main()
         }
     }
 
+    if (pos.x < -0.8 && pos.y > 0.8) {
+        int xi = int(map(pos.x, -1.0, -0.8, 0, 3));
+        int yi = int(map(pos.y, 0.8, 1.0, 0, 3));
+        float value = camera[xi][yi];
+        if (value > 0.0) {
+            gl_FragColor = vec4(0.0, value, 0.0, 1.0);
+        } else {
+            gl_FragColor = vec4(-value, 0.0, 0.0, 1.0);
+        }
+        return;
+    }
+
     vec3 color = vec3(0.0);
 
     int samples = 10;
