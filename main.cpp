@@ -143,7 +143,7 @@ int main()
 
         // rendering command
         // no clear or z buffer because it redraws the whole screen anyway
-        // set the camera transformation matrix
+        // set the camera location and transformation matrix
         setMat3(shader, "camera", defaultcamera * glm::mat3(
             cos(currentFrame), sin(currentFrame), 0.0,
             -sin(currentFrame), cos(currentFrame), 0.0,
@@ -152,6 +152,11 @@ int main()
             cos(pi/3), 0.0, sin(pi/3),
             0.0, 1.0, 0.0,
             -sin(pi/3), 0.0, cos(pi/3)
+        ));
+        setVec3(shader, "campos", glm::vec3(0.0, 0.0, -1.0) * glm::mat3(
+            cos(currentFrame), 0.0, -sin(currentFrame),
+            0.0, 1.0, 0.0,
+            sin(currentFrame), 0.0, cos(currentFrame)
         ));
         // seconds since start
         setFloat(shader, "time", currentFrame);

@@ -5,6 +5,7 @@ uniform float height;
 
 uniform float fps;
 uniform mat3 camera;
+uniform vec3 campos;
 uniform float time;
 
 varying vec2 pos;
@@ -98,7 +99,7 @@ hit pathtrace2(ray r) {
 }
 
 hit pathtrace3(ray r) {
-    vec3 center = vec3(0.0, 0.0, 2.0);
+    vec3 center = vec3(3.0, 0.0, 1.0);
     float radius = 0.5;
     
     vec3 oc = center - r.pos;
@@ -171,7 +172,6 @@ void main()
             return;
         }
     }
-    vec3 campos = vec3(0.0, 0.0, 0.0);
 
     vec3 color = vec3(0.0);
 
