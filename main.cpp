@@ -40,6 +40,8 @@ const char *loadFile(std::filesystem::path &filepath) {
     }
 }
 
+const float pi = 3.14159; // i'm too lazy to copy paste std::numbers::pi
+
 int main()
 {
 
@@ -142,17 +144,17 @@ int main()
         // rendering command
         // no clear or z buffer because it redraws the whole screen anyway
         // set the camera transformation matrix
-        setMat(shader, "camera", defaultcamera * glm::mat3(
+        setMat3(shader, "camera", defaultcamera * glm::mat3(
             cos(currentFrame), sin(currentFrame), 0.0,
             -sin(currentFrame), cos(currentFrame), 0.0,
             0.0, 0.0, 1.0
-        ) * mat3(
+        ) * glm::mat3(
             cos(pi/3), 0.0, sin(pi/3),
             0.0, 1.0, 0.0,
             -sin(pi/3), 0.0, cos(pi/3)
         ));
         // fps meter
-        setFloat(shader, "fps", 1.0 / (totfps / dtlen));
+        setFloat(shader, "fps", 1.0 / (totdt / dtlen));
         // draw over the whole screen
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
