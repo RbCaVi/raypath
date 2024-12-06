@@ -119,6 +119,13 @@ int main()
     
     int dti = 0;
 
+    glm::vec3 campos = glm::vec3(-1.0, 0.0, 0.0);
+    glm::mat3 camtrans = glm::mat3(
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0
+    );
+
     //the render loop
     const long long startTick = SDL_GetPerformanceCounter();
     double lastFrame = 0;
@@ -144,20 +151,8 @@ int main()
         // rendering command
         // no clear or z buffer because it redraws the whole screen anyway
         // set the camera location and transformation matrix
-        setMat3(shader, "camera", defaultcamera * glm::mat3(
-            cos(currentFrame), sin(currentFrame), 0.0,
-            -sin(currentFrame), cos(currentFrame), 0.0,
-            0.0, 0.0, 1.0
-        ) * glm::mat3(
-            cos(pi/3), 0.0, sin(pi/3),
-            0.0, 1.0, 0.0,
-            -sin(pi/3), 0.0, cos(pi/3)
-        ));
-        setVec3(shader, "campos", glm::vec3(0.0, 0.0, -1.0) * glm::mat3(
-            cos(currentFrame), 0.0, -sin(currentFrame),
-            0.0, 1.0, 0.0,
-            sin(currentFrame), 0.0, cos(currentFrame)
-        ));
+        setMat3(shader, "camera", defaultcamera * camtrans);
+        setVec3(shader, "campos", campos);
         // seconds since start
         setFloat(shader, "time", currentFrame);
         // fps meter
@@ -180,6 +175,118 @@ int main()
 
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_ESCAPE] == 1) { // if escape is pressed, quit
             closed = true;
+        }
+        
+        // strafe
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_UP] == 1) {
+            campos += glm::vec3(0.0, 0.1, 0.0) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_DOWN] == 1) {
+            campos += glm::vec3(0.0, -0.1, 0.0) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_LEFT] == 1) {
+            campos += glm::vec3(-0.1, 0.0, 0.0) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_RIGHT] == 1) {
+            campos += glm::vec3(0.1, 0.0, 0.0) * camtrans;
+        }
+
+        // fly
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_SPACE] == 1) {
+            campos += glm::vec3(0.0, 0.0, 0.1) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_BACKSPACE] == 1) {
+            campos += glm::vec3(0.0, 0.0, -0.1) * camtrans;
+        }
+        
+        // look
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_W] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, cos(0.1), sin(0.1),
+                0.0, -sin(0.1), cos(0.1)
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_S] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, cos(0.1), -sin(0.1),
+                0.0, sin(0.1), cos(0.1)
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A] == 1) {
+            camtrans = glm::mat3(
+                cos(0.1), 0.0, -sin(0.1),
+                0.0, 1.0, 0.0,
+                sin(0.1), 0.0, cos(0.1)
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_D] == 1) {
+            camtrans = glm::mat3(
+                cos(0.1), 0.0, sin(0.1),
+                0.0, 1.0, 0.0,
+                -sin(0.1), 0.0, cos(0.1)
+            ) * camtrans;
+        }
+
+        // twist
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_Q] == 1) {
+            camtrans = glm::mat3(
+                cos(0.1), -sin(0.1), 0.0,
+                sin(0.1), cos(0.1), 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_E] == 1) {
+            camtrans = glm::mat3(
+                cos(0.1), sin(0.1), 0.0,
+                -sin(0.1), cos(0.1), 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+
+        // weird :)
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_U] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.1, 1.0, 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_J] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                -0.1, 1.0, 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_I] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                0.1, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_K] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                -0.1, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_O] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                0.0, 0.1, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_L] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                0.0, -0.1, 1.0
+            ) * camtrans;
         }
     }
     // delete VBO because we're done with it
