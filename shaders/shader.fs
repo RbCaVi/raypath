@@ -38,8 +38,7 @@ hit pathtrace(ray r) {
 
     vec3 n = cross(planev1, planev2);
     vec3 normal = normalize(n);
-    vec3 Q = planecenter;
-    float D = dot(normal, Q);
+    float D = dot(normal, planecenter);
 
     float denom = dot(normal, r.dir);
 
@@ -72,8 +71,7 @@ hit pathtrace2(ray r) {
 
     vec3 n = cross(planev1, planev2);
     vec3 normal = normalize(n);
-    vec3 Q = planecenter;
-    float D = dot(normal, Q);
+    float D = dot(normal, planecenter);
 
     float denom = dot(normal, r.dir);
 
