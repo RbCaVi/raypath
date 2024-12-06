@@ -171,7 +171,6 @@ void main()
             return;
         }
     }
-    float pi = 3.14159;
     vec3 campos = vec3(0.0, 0.0, 0.0);
 
     vec3 color = vec3(0.0);
