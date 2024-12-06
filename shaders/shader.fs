@@ -102,10 +102,10 @@ hit pathtrace3(ray r) {
     float radius = 0.5;
     
     vec3 oc = center - r.pos;
-    auto a = dot(r.dir, r.dir);
-    auto h = dot(r.dir, oc);
-    auto c = dot(oc, oc) - radius*radius;
-    auto d = h*h - a*c;
+    float a = dot(r.dir, r.dir);
+    float h = dot(r.dir, oc);
+    float c = dot(oc, oc) - radius*radius;
+    float d = h*h - a*c;
 
     if (d < 0) {
         return hit(-1.0, vec3(0.0));
