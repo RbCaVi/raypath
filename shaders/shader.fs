@@ -5,6 +5,7 @@ uniform float height;
 
 uniform float fps;
 uniform mat3 camera;
+uniform float time;
 
 varying vec2 pos;
 

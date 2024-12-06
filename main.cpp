@@ -153,6 +153,8 @@ int main()
             0.0, 1.0, 0.0,
             -sin(pi/3), 0.0, cos(pi/3)
         ));
+        // seconds since start
+        setFloat(shader, "time", currentFrame);
         // fps meter
         setFloat(shader, "fps", 1.0 / (totdt / dtlen));
         // draw over the whole screen
