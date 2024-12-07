@@ -27,7 +27,7 @@ struct hit {
     float dist;
     vec3 color;
     vec3 reflected;
-    ray next;
+    vec3 dir;
 };
 
 vec3 at(ray r, float t) {
@@ -60,11 +60,11 @@ float map(float value, float min1, float max1, float min2, float max2) {
 }
 
 hit miss() {
-    return hit(-1, vec3(0.0), vec3(0.0), ray(vec3(0.0), vec3(0.0)));
+    return hit(-1, vec3(0.0), vec3(0.0), vec3(0.0));
 }
 
 hit noreflect(float dist, vec3 color) {
-    return hit(dist, color, vec3(0.0), ray(vec3(0.0), vec3(0.0)));
+    return hit(dist, color, vec3(0.0), vec3(0.0));
 }
 
 hit pathtrace(ray r) {
@@ -214,12 +214,14 @@ hit pathtrace4(ray r) {
 
     vec3 ref = r.dir - 2 * dot(r.dir, normal) * normal;
 
-    return noreflect(t, castray2(ray(at(r, t), ref)) * 0.8 + 0.2);
+    return hit(t, vec3(0.2), vec3(0.8), ref);
 }
 
 vec3 castray(ray r) {
-    return get_color(
-        merge_hits(
+    vec3 color = vec3(0.0);
+    vec3 factor = vec3(1.0);
+    for (int i = 0; i < 10; i++) {
+        hit h = merge_hits(
             merge_hits(
                 pathtrace(r),
                 pathtrace2(r)
@@ -228,8 +230,14 @@ vec3 castray(ray r) {
                 pathtrace3(r),
                 pathtrace4(r)
             )
-        )
-    );
+        );
+        color += get_color(h) * factor;
+        factor *= h.reflected;
+        if (dot(factor, factor) < 0.1) {
+            break;
+        }
+    }
+    return color;
 }
 
 void main() {
