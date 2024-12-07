@@ -18,14 +18,16 @@ vec3 bg() {
     return vec3(vec2(0.5, 0.5) + pos * vec2(0.5, -0.5), mod(time, 1.0));
 }
 
-struct hit {
-    float dist;
-    vec3 color;
-};
-
 struct ray {
     vec3 pos;
     vec3 dir;
+};
+
+struct hit {
+    float dist;
+    vec3 color;
+    vec3 reflected;
+    ray next;
 };
 
 vec3 at(ray r, float t) {
@@ -57,6 +59,14 @@ float map(float value, float min1, float max1, float min2, float max2) {
   return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
 
+hit miss() {
+    return hit(-1, vec3(0.0), vec3(0.0), ray(vec3(0.0), vec3(0.0)));
+}
+
+hit noreflect(float dist, vec3 color) {
+    return hit(dist, color, vec3(0.0), ray(vec3(0.0), vec3(0.0)));
+}
+
 hit pathtrace(ray r) {
     // plane intersection
     vec3 planecenter = vec3(0.0, 0.0, 3.0);
@@ -70,13 +80,13 @@ hit pathtrace(ray r) {
     float denom = dot(normal, r.dir);
 
     if (abs(denom) < 1e-8) {
-        return hit(-1, vec3(0.0));
+        return miss();
     }
 
     float t = (D - dot(normal, r.pos)) / denom;
 
     if (t < 0) {
-        return hit(-1, vec3(0.0));
+        return miss();
     }
 
     vec3 intersection = at(r, t);
@@ -87,7 +97,7 @@ hit pathtrace(ray r) {
     float a = dot(w, cross(P, planev2));
     float b = dot(w, cross(planev1, P));
 
-    return hit(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));
+    return noreflect(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));
 }
 
 hit pathtrace2(ray r) {
@@ -103,13 +113,13 @@ hit pathtrace2(ray r) {
     float denom = dot(normal, r.dir);
 
     if (abs(denom) < 1e-8) {
-        return hit(-1, vec3(0.0));
+        return miss();
     }
 
     float t = (D - dot(normal, r.pos)) / denom;
 
     if (t < 0) {
-        return hit(-1, vec3(0.0));
+        return miss();
     }
 
     vec3 intersection = at(r, t);
@@ -120,7 +130,7 @@ hit pathtrace2(ray r) {
     float a = dot(w, cross(P, planev2));
     float b = dot(w, cross(planev1, P));
 
-    return hit(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));
+    return noreflect(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));
 }
 
 hit pathtrace3(ray r) {
@@ -134,7 +144,7 @@ hit pathtrace3(ray r) {
     float d = h*h - a*c;
 
     if (d < 0) {
-        return hit(-1.0, vec3(0.0));
+        return miss();
     }
 
     float ainv = 1.0 / a;
@@ -143,7 +153,7 @@ hit pathtrace3(ray r) {
 
     if (h_a < -sqrtd_a) {
         // neither the h - sqrtd nor the h + sqrtd solutions will work
-        return hit(-1.0, vec3(0.0));
+        return miss();
     }
 
     float t;
@@ -154,7 +164,7 @@ hit pathtrace3(ray r) {
         t = h_a - sqrtd_a;
     }
 
-    return hit(t, ((center - at(r, t)) / radius) * 0.5 + 0.5);
+    return noreflect(t, ((center - at(r, t)) / radius) * 0.5 + 0.5);
 }
 
 vec3 castray2(ray r) {
@@ -180,7 +190,7 @@ hit pathtrace4(ray r) {
     float d = h*h - a*c;
 
     if (d < 0) {
-        return hit(-1.0, vec3(0.0));
+        return miss();
     }
 
     float ainv = 1.0 / a;
@@ -189,7 +199,7 @@ hit pathtrace4(ray r) {
 
     if (h_a < -sqrtd_a) {
         // neither the h - sqrtd nor the h + sqrtd solutions will work
-        return hit(-1.0, vec3(0.0));
+        return miss();
     }
 
     float t;
@@ -204,7 +214,7 @@ hit pathtrace4(ray r) {
 
     vec3 ref = r.dir - 2 * dot(r.dir, normal) * normal;
 
-    return hit(t, castray2(ray(at(r, t), ref)) * 0.8 + 0.2);
+    return noreflect(t, castray2(ray(at(r, t), ref)) * 0.8 + 0.2);
 }
 
 vec3 castray(ray r) {
