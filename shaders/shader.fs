@@ -32,6 +32,31 @@ vec3 at(ray r, float t) {
     return r.pos + r.dir * t;
 }
 
+vec3 get_color(hit p) {
+    if (p.dist < 0.0) {
+        return bg();
+    }
+    return p.color;
+}
+
+hit merge_hits(hit h1, hit h2) {
+    if (h1.dist < 0) {
+        return h2;
+    }
+    if (h2.dist < 0) {
+        return h1;
+    }
+    if (h2.dist < h1.dist) {
+        return h2;
+    }
+    return h1;
+}
+
+// https://gist.github.com/companje/29408948f1e8be54dd5733a74ca49bb9
+float map(float value, float min1, float max1, float min2, float max2) {
+  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+}
+
 hit pathtrace(ray r) {
     // plane intersection
     vec3 planecenter = vec3(0.0, 0.0, 3.0);
@@ -132,31 +157,6 @@ hit pathtrace3(ray r) {
     return hit(t, ((center - at(r, t)) / radius) * 0.5 + 0.5);
 }
 
-vec3 get_color(hit p) {
-    if (p.dist < 0.0) {
-        return bg();
-    }
-    return p.color;
-}
-
-hit merge_hits(hit h1, hit h2) {
-    if (h1.dist < 0) {
-        return h2;
-    }
-    if (h2.dist < 0) {
-        return h1;
-    }
-    if (h2.dist < h1.dist) {
-        return h2;
-    }
-    return h1;
-}
-
-// https://gist.github.com/companje/29408948f1e8be54dd5733a74ca49bb9
-float map(float value, float min1, float max1, float min2, float max2) {
-  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-}
-
 vec3 castray2(ray r) {
     return get_color(
         merge_hits(
@@ -170,7 +170,7 @@ vec3 castray2(ray r) {
 }
 
 hit pathtrace4(ray r) {
-    vec3 center = vec3(2.0, 0.0, 3.0);
+    vec3 center = vec3(2.0, 0.0, 2.8);
     float radius = 0.5;
     
     vec3 oc = center - r.pos;
@@ -204,7 +204,7 @@ hit pathtrace4(ray r) {
 
     vec3 ref = r.dir - 2 * dot(r.dir, normal) * normal;
 
-    return hit(t, castray2(ray(at(r, t), ref)));
+    return hit(t, castray2(ray(at(r, t), ref)) * 0.8 + 0.2);
 }
 
 vec3 castray(ray r) {
@@ -222,8 +222,7 @@ vec3 castray(ray r) {
     );
 }
 
-void main()
-{
+void main() {
     if (pos.x > 0.9) {
         float top = map(fps, 0.0, 120.0, -1.0, 1.0);
         if (pos.y < top) {
