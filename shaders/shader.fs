@@ -314,7 +314,7 @@ hit pathtrace6(ray r) {
 }
 
 float sdf2(vec3 pos) {
-    vec3 r = mod((pos - vec3(0.0, 0.0, -10.0)), 0.5);
+    vec3 r = mod(pos, 0.5) - vec3(0.25, 0.25, 0.25);
     return sqrt(dot(r, r)) - 0.2;
 }
 
