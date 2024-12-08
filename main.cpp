@@ -110,7 +110,7 @@ int main()
     glm::vec3 right = glm::vec3(1.0, 0.0, 0.0);
     glm::mat3 defaultcamera = glm::mat3(right, up, front);
     
-    const int dtlen = 20;
+    const int dtlen = 60;
     double dts[dtlen];
     
     for (int i = 0; i < dtlen; i++) {
@@ -185,8 +185,6 @@ int main()
                         -sin(angle), cos(angle), 0.0,
                         0.0, 0.0, 1.0
                     ) * camtrans;
-                    event.motion.x;
-                    event.motion.y;
                 }
               default:
                 break;
@@ -199,24 +197,24 @@ int main()
         
         // strafe
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_UP] == 1) {
-            campos += glm::vec3(0.0, 0.1, 0.0) * camtrans;
+            campos += glm::vec3(0.0, 0.02, 0.0) * camtrans;
         }
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_DOWN] == 1) {
-            campos += glm::vec3(0.0, -0.1, 0.0) * camtrans;
+            campos += glm::vec3(0.0, -0.02, 0.0) * camtrans;
         }
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_LEFT] == 1) {
-            campos += glm::vec3(-0.1, 0.0, 0.0) * camtrans;
+            campos += glm::vec3(-0.02, 0.0, 0.0) * camtrans;
         }
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_RIGHT] == 1) {
-            campos += glm::vec3(0.1, 0.0, 0.0) * camtrans;
+            campos += glm::vec3(0.02, 0.0, 0.0) * camtrans;
         }
 
         // fly
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_SPACE] == 1) {
-            campos += glm::vec3(0.0, 0.0, 0.1) * camtrans;
+            campos += glm::vec3(0.0, 0.0, 0.02) * camtrans;
         }
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_BACKSPACE] == 1) {
-            campos += glm::vec3(0.0, 0.0, -0.1) * camtrans;
+            campos += glm::vec3(0.0, 0.0, -0.02) * camtrans;
         }
         
         // look
