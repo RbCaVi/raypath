@@ -42,10 +42,10 @@ vec3 get_color(hit p) {
 }
 
 hit merge_hits(hit h1, hit h2) {
-    if (h1.dist < 0) {
+    if (h1.dist < 0.01) {
         return h2;
     }
-    if (h2.dist < 0) {
+    if (h2.dist < 0.01) {
         return h1;
     }
     if (h2.dist < h1.dist) {
@@ -167,18 +167,6 @@ hit pathtrace3(ray r) {
     return noreflect(t, ((center - at(r, t)) / radius) * 0.5 + 0.5);
 }
 
-vec3 castray2(ray r) {
-    return get_color(
-        merge_hits(
-            merge_hits(
-                pathtrace(r),
-                pathtrace2(r)
-            ),
-            pathtrace3(r)
-        )
-    );
-}
-
 hit pathtrace4(ray r) {
     vec3 center = vec3(2.0, 0.0, 2.8);
     float radius = 0.5;
@@ -233,6 +221,7 @@ vec3 castray(ray r) {
         );
         color += get_color(h) * factor;
         factor *= h.reflected;
+        r = ray(at(r, h.dist - 0.01), h.dir);
         if (dot(factor, factor) < 0.1) {
             break;
         }
