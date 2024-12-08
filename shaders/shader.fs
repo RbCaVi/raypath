@@ -207,6 +207,46 @@ hit pathtrace4(ray r) {
     return hit(t, vec3(0.2), vec3(0.8), ref);
 }
 
+hit pathtrace5(ray r) {
+    vec3 bmin = vec3(-2.0, -2.0, -2.0);
+    vec3 bmax = vec3(2.0, -1.5, -1.5);
+
+    vec3 adinv = 1.0 / r.dir;
+
+    vec3 t0 = (bmin - r.pos) * adinv;
+    vec3 t1 = (bmax - r.pos) * adinv;
+
+    float tmin = max(
+        max(
+            min(t0.x, t1.x),
+            min(t0.y, t1.y)
+        ),
+        min(t0.z, t1.z)
+    );
+
+    float tmax = min(
+        min(
+            max(t0.x, t1.x),
+            max(t0.y, t1.y)
+        ),
+        max(t0.z, t1.z)
+    );
+
+    if (tmax <= tmin) {
+        return miss();
+    }
+
+    if (tmin > 0) {
+        return noreflect(tmin, vec3(0.0, 1.0, 0.0));
+    }
+
+    if (tmax > 0) {
+        return noreflect(tmax, vec3(0.0, 1.0, 0.0));
+    }
+    
+    return miss();
+}
+
 vec3 castray(ray r) {
     vec3 color = vec3(0.0);
     vec3 factor = vec3(1.0);
@@ -218,7 +258,10 @@ vec3 castray(ray r) {
             ),
             merge_hits(
                 pathtrace3(r),
-                pathtrace4(r)
+                merge_hits(
+                    pathtrace4(r),
+                    pathtrace5(r)
+                )
             )
         );
         color += get_color(h) * factor;
