@@ -168,6 +168,26 @@ int main()
               case SDL_QUIT: // x button
                 closed = true;
                 break;
+              case SDL_MOUSEMOTION:
+                if (SDL_GetMouseState(NULL, NULL)) {
+                    float angle = atan2(event.motion.yrel, event.motion.xrel);
+                    float mag = 2 * sqrt(((float)event.motion.xrel) / SCR_WIDTH * ((float)event.motion.xrel) / SCR_WIDTH + ((float)event.motion.yrel) / SCR_HEIGHT * ((float)event.motion.yrel) / SCR_HEIGHT);
+                    camtrans = glm::mat3(
+                        cos(angle), -sin(angle), 0.0,
+                        sin(angle), cos(angle), 0.0,
+                        0.0, 0.0, 1.0
+                    ) * glm::mat3(
+                        cos(mag), 0.0, -sin(mag),
+                        0.0, 1.0, 0.0,
+                        sin(mag), 0.0, cos(mag)
+                    ) * glm::mat3(
+                        cos(angle), sin(angle), 0.0,
+                        -sin(angle), cos(angle), 0.0,
+                        0.0, 0.0, 1.0
+                    ) * camtrans;
+                    event.motion.x;
+                    event.motion.y;
+                }
               default:
                 break;
             }
