@@ -207,36 +207,6 @@ hit pathtrace4(ray r) {
     return hit(t, vec3(0.2), vec3(0.8), ref);
 }
 
-ray march(ray r, float dist) {
-    return ray(at(r, dist), r.dir);
-}
-
-float sdf(vec3 pos) {
-    vec3 r = pos - vec3(0.0, 0.0, 0.0);
-    return sqrt(dot(r, r)) - 1.0;
-}
-
-hit raymarch(ray r, float mindist, float maxdist) {
-    float totaldist = mindist;
-    r.dir = normalize(r.dir);
-    r = march(r, mindist);
-    for (int i = 0; i < 100; i++) {
-        float dist = sdf(r.pos);
-        if (dist > 10000) {
-            return miss();
-        }
-        if (dist < 0.01) {
-            return noreflect(totaldist, abs(r.pos));
-        }
-        totaldist += dist;
-        if (totaldist > maxdist) {
-            return miss();
-        }
-        r = march(r, dist);
-    }
-    return miss();
-}
-
 hit pathtrace5(ray r) {
     vec3 bmin = vec3(-2.0, -2.0, -2.0);
     vec3 bmax = vec3(2.0, -1.5, -1.5);
@@ -274,6 +244,36 @@ hit pathtrace5(ray r) {
         return noreflect(tmax, vec3(0.0, 1.0, 0.0));
     }
     
+    return miss();
+}
+
+ray march(ray r, float dist) {
+    return ray(at(r, dist), r.dir);
+}
+
+float sdf(vec3 pos) {
+    vec3 r = pos - vec3(0.0, 0.0, 0.0);
+    return sqrt(dot(r, r)) - 1.0;
+}
+
+hit raymarch(ray r, float mindist, float maxdist) {
+    float totaldist = mindist;
+    r.dir = normalize(r.dir);
+    r = march(r, mindist);
+    for (int i = 0; i < 100; i++) {
+        float dist = sdf(r.pos);
+        if (dist > 10000) {
+            return miss();
+        }
+        if (dist < 0.01) {
+            return noreflect(totaldist, abs(r.pos));
+        }
+        totaldist += dist;
+        if (totaldist > maxdist) {
+            return miss();
+        }
+        r = march(r, dist);
+    }
     return miss();
 }
 
