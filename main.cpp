@@ -246,6 +246,20 @@ int main()
         }
 
         // weird :)
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_Y] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.1, 0.0,
+                0.0, 1.0, 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_H] == 1) {
+            camtrans = glm::mat3(
+                1.0, -0.1, 0.0,
+                0.0, 1.0, 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_U] == 1) {
             camtrans = glm::mat3(
                 1.0, 0.0, 0.0,
