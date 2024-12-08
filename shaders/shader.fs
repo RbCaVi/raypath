@@ -8,6 +8,8 @@ uniform mat3 camera;
 uniform vec3 campos;
 uniform float time;
 
+uniform float fov;
+
 varying vec2 pos;
 
 float rand(vec2 v) {
@@ -262,8 +264,8 @@ void main() {
     float invsamples = 1.0 / samples;
     for(int i = 0; i < samples; i++) {
         vec2 tpos = pos + vec2(rand(pos + vec2(time, i)), rand(pos + vec2(time + 1, i * 2))) / vec2(width, height) * 4; // * 2 makes less blurring but maybe more aliasing? (not sure)
-        vec3 raydir = vec3(tpos, 1.0) * camera;
-        ray r = ray(campos, raydir);
+        vec3 raydir = vec3(tpos * fov, 1.0) * camera;
+        ray r = ray(campos + vec3(tpos * (1 - fov), 0.0) * camera, raydir);
         color += castray(r);
     }
 

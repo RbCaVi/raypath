@@ -126,6 +126,8 @@ int main()
         0.0, 0.0, 1.0
     );
 
+    float fov = 1.0;
+
     //the render loop
     const long long startTick = SDL_GetPerformanceCounter();
     double lastFrame = 0;
@@ -157,6 +159,8 @@ int main()
         setFloat(shader, "time", currentFrame);
         // fps meter
         setFloat(shader, "fps", 1.0 / (totdt / dtlen));
+        // fov (perspective or ortho)
+        setFloat(shader, "fov", fov);
         // draw over the whole screen
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -261,6 +265,20 @@ int main()
                 -sin(0.1), cos(0.1), 0.0,
                 0.0, 0.0, 1.0
             ) * camtrans;
+        }
+
+        // 
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_Z] == 1) {
+            fov += 0.02;
+            if (fov > 1.0) {
+                fov = 1.0;
+            }
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_X] == 1) {
+            fov -= 0.02;
+            if (fov < 0.0) {
+                fov = 0.0;
+            }
         }
 
         // weird :)
