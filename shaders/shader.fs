@@ -313,24 +313,89 @@ hit pathtrace6(ray r) {
     }
 }
 
+float sdf2(vec3 pos) {
+    vec3 r = mod((pos - vec3(0.0, 0.0, -10.0)), 0.5);
+    return sqrt(dot(r, r)) - 0.2;
+}
+
+hit raymarch2(ray r, float mindist, float maxdist) {
+    float totaldist = mindist;
+    r.dir = normalize(r.dir);
+    r = march(r, mindist);
+    for (int i = 0; i < 100; i++) {
+        float dist = sdf2(r.pos);
+        if (dist > 10000) {
+            return miss();
+        }
+        if (dist < 0.01) {
+            return noreflect(totaldist, abs(r.pos));
+        }
+        totaldist += dist;
+        if (totaldist > maxdist) {
+            return miss();
+        }
+        r = march(r, dist);
+    }
+    return miss();
+}
+
+hit pathtrace7(ray r) {
+    vec3 bmin = vec3(-1.5, -1.5, -10.0 - 1.5);
+    vec3 bmax = vec3(1.5, 1.5, -10.0 + 1.5);
+
+    vec3 adinv = 1.0 / r.dir;
+
+    vec3 t0 = (bmin - r.pos) * adinv;
+    vec3 t1 = (bmax - r.pos) * adinv;
+
+    float tmin = max(
+        max(
+            min(t0.x, t1.x),
+            min(t0.y, t1.y)
+        ),
+        min(t0.z, t1.z)
+    );
+
+    float tmax = min(
+        min(
+            max(t0.x, t1.x),
+            max(t0.y, t1.y)
+        ),
+        max(t0.z, t1.z)
+    );
+
+    if (tmax <= tmin) {
+        return miss();
+    }
+    
+    if (rand(vec2(time, tmin)) > -0.3) {
+        return raymarch2(r, max(tmin, 0), tmax);
+    } else {
+        return noreflect(tmax, vec3(1.0, 1.0, 1.0));
+    }
+}
+
 vec3 castray(ray r) {
     vec3 color = vec3(0.0);
     vec3 factor = vec3(1.0);
     for (int i = 0; i < 10; i++) {
         hit h = merge_hits(
             merge_hits(
-                pathtrace(r),
-                pathtrace2(r)
-            ),
-            merge_hits(
+                merge_hits(
+                    pathtrace(r),
+                    pathtrace2(r)
+                ),
                 merge_hits(
                     pathtrace3(r),
                     pathtrace4(r)
-                ),
+                )
+            ),
+            merge_hits(
                 merge_hits(
                     pathtrace5(r),
                     pathtrace6(r)
-                )
+                ),
+                pathtrace7(r)
             )
         );
         color += get_color(h) * factor;
