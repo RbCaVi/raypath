@@ -40,7 +40,7 @@ vec3 get_color(hit p) {
     if (p.dist < 0.0) {
         return bg();
     }
-    return vec3(mod(p.dist, 0.2) * 5);
+    return p.color;
 }
 
 hit merge_hits(hit h1, hit h2) {
@@ -400,9 +400,12 @@ vec3 castray(ray r) {
                 pathtrace7(r)
             )
         );
-        h.dist *= sqrt(dot(r.dir, r.dir));
-        color += get_color(h) * factor;
-        break;
+        if (false) {
+            color = vec3(mod(h.dist * sqrt(dot(r.dir, r.dir)), 0.2) * 5);
+            break;
+        } else {
+            color += get_color(h) * factor;
+        }
         factor *= h.reflected;
         r = ray(at(r, h.dist - 0.01), h.dir);
         if (dot(factor, factor) < 0.1) {
