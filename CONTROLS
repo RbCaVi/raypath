@@ -1,0 +1,14 @@
+CONTROLS
+
+fly forward with spacebar and backward with backspace
+
+strafe with the arrow keys
+look with WASD or left click drag
+if you get holonomy'd, you can twist with Q and E
+
+X goes towards orthographic camera (everything is the same size no matter how far it is away)
+Z goes towards perspective camera (normal)
+
+Y/H, U/J, I/K, O/L, P/;, [/' are funny looking shear transformations
+
+right click switches between distance view mode and normal (color) mode
