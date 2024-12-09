@@ -177,7 +177,7 @@ int main()
                 closed = true;
                 break;
               case SDL_MOUSEMOTION:
-                if (SDL_GetMouseState(NULL, NULL)) {
+                if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) { // left mouse
                     float angle = atan2(event.motion.yrel, event.motion.xrel);
                     float mag = 2 * sqrt(((float)event.motion.xrel) / SCR_WIDTH * ((float)event.motion.xrel) / SCR_WIDTH + ((float)event.motion.yrel) / SCR_HEIGHT * ((float)event.motion.yrel) / SCR_HEIGHT);
                     camtrans = glm::mat3(
