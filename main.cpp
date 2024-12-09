@@ -128,6 +128,8 @@ int main()
 
     float fov = 1.0;
 
+    bool showdist = false;
+
     //the render loop
     const long long startTick = SDL_GetPerformanceCounter();
     double lastFrame = 0;
@@ -161,6 +163,8 @@ int main()
         setFloat(shader, "fps", 1.0 / (totdt / dtlen));
         // fov (perspective or ortho)
         setFloat(shader, "fov", fov);
+        // show distance or real color
+        setBool(shader, "showdist", showdist);
         // draw over the whole screen
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -190,6 +194,12 @@ int main()
                         0.0, 0.0, 1.0
                     ) * camtrans;
                 }
+                break;
+              case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == 3) { // right mouse
+                    showdist = !showdist;
+                }
+                break;
               default:
                 break;
             }

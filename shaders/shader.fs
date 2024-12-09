@@ -10,6 +10,8 @@ uniform float time;
 
 uniform float fov;
 
+uniform bool showdist;
+
 varying vec2 pos;
 
 float rand(vec2 v) {
@@ -406,7 +408,7 @@ vec3 castray(ray r) {
                 pathtrace7(r, h.dist)
             )
         );
-        if (false) {
+        if (showdist) {
             color = vec3(mod(h.dist * sqrt(dot(r.dir, r.dir)), 0.2) * 5);
             break;
         } else {
