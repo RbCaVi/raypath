@@ -278,7 +278,7 @@ hit raymarch(ray r, float mindist, float maxdist) {
     return miss();
 }
 
-hit pathtrace6(ray r) {
+hit pathtrace6(ray r, float maxdist) {
     vec3 bmin = vec3(-1.5, -1.5, -1.5);
     vec3 bmax = vec3(1.5, 1.5, 1.5);
 
@@ -308,6 +308,9 @@ hit pathtrace6(ray r) {
     }
     
     if (rand(vec2(time, tmin)) > -0.3) {
+        if (maxdist > 0.0 && tmax > maxdist) {
+            tmax = maxdist;
+        }
         return raymarch(r, max(tmin, 0), tmax);
     } else {
         return noreflect(tmax, vec3(0.0, 0.0, 1.0));
@@ -341,7 +344,7 @@ hit raymarch2(ray r, float mindist, float maxdist) {
     return miss();
 }
 
-hit pathtrace7(ray r) {
+hit pathtrace7(ray r, float maxdist) {
     vec3 bmin = vec3(-1.5, -1.5, -10.0 - 1.5);
     vec3 bmax = vec3(1.5, 1.5, -10.0 + 1.5);
 
@@ -371,6 +374,9 @@ hit pathtrace7(ray r) {
     }
     
     if (rand(vec2(time, tmin)) > -0.3) {
+        if (maxdist > 0.0 && tmax > maxdist) {
+            tmax = maxdist;
+        }
         return raymarch2(r, max(tmin, 0), tmax);
     } else {
         return noreflect(tmax, vec3(1.0, 1.0, 1.0));
@@ -392,12 +398,12 @@ vec3 castray(ray r) {
                     pathtrace4(r)
                 )
             ),
+            pathtrace5(r)
+        );
+        h = merge_hits(h,
             merge_hits(
-                merge_hits(
-                    pathtrace5(r),
-                    pathtrace6(r)
-                ),
-                pathtrace7(r)
+                pathtrace6(r, h.dist),
+                pathtrace7(r, h.dist)
             )
         );
         if (false) {
