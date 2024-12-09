@@ -306,6 +306,7 @@ int main()
                 0.0, 0.0, 1.0
             ) * camtrans;
         }
+
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_U] == 1) {
             camtrans = glm::mat3(
                 1.0, 0.0, 0.0,
@@ -320,6 +321,7 @@ int main()
                 0.0, 0.0, 1.0
             ) * camtrans;
         }
+
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_I] == 1) {
             camtrans = glm::mat3(
                 1.0, 0.0, 0.0,
@@ -334,18 +336,49 @@ int main()
                 -0.1, 0.0, 1.0
             ) * camtrans;
         }
+
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_O] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.1,
+                0.0, 1.0, 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_L] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, -0.1,
+                0.0, 1.0, 0.0,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+        
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_P] == 1) {
             camtrans = glm::mat3(
                 1.0, 0.0, 0.0,
                 0.0, 1.0, 0.0,
                 0.0, 0.1, 1.0
             ) * camtrans;
         }
-        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_L] == 1) {
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_SEMICOLON] == 1) {
             camtrans = glm::mat3(
                 1.0, 0.0, 0.0,
                 0.0, 1.0, 0.0,
                 0.0, -0.1, 1.0
+            ) * camtrans;
+        }
+        
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_LEFTBRACKET] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.1,
+                0.0, 0.0, 1.0
+            ) * camtrans;
+        }
+        if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_APOSTROPHE] == 1) {
+            camtrans = glm::mat3(
+                1.0, 0.0, 0.0,
+                0.0, 1.0, -0.1,
+                0.0, 0.0, 1.0
             ) * camtrans;
         }
     }
