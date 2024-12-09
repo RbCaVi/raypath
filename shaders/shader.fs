@@ -258,8 +258,9 @@ float sdf(vec3 pos) {
 
 hit raymarch(ray r, float mindist, float maxdist) {
     float totaldist = mindist;
-    r.dir = normalize(r.dir);
+    float ilen = 1 / sqrt(dot(r.dir, r.dir));
     r = march(r, mindist);
+    r.dir = r.dir * ilen;
     for (int i = 0; i < 100; i++) {
         float dist = sdf(r.pos);
         if (dist > 10000) {
@@ -268,7 +269,7 @@ hit raymarch(ray r, float mindist, float maxdist) {
         if (dist < 0.01) {
             return noreflect(totaldist, abs(r.pos));
         }
-        totaldist += dist;
+        totaldist += dist * ilen;
         if (totaldist > maxdist) {
             return miss();
         }
@@ -320,8 +321,9 @@ float sdf2(vec3 pos) {
 
 hit raymarch2(ray r, float mindist, float maxdist) {
     float totaldist = mindist;
-    r.dir = normalize(r.dir);
+    float ilen = 1 / sqrt(dot(r.dir, r.dir));
     r = march(r, mindist);
+    r.dir = r.dir * ilen;
     for (int i = 0; i < 100; i++) {
         float dist = sdf2(r.pos);
         if (dist > 10000) {
@@ -330,7 +332,7 @@ hit raymarch2(ray r, float mindist, float maxdist) {
         if (dist < 0.01) {
             return noreflect(totaldist, abs(r.pos));
         }
-        totaldist += dist;
+        totaldist += dist * ilen;
         if (totaldist > maxdist) {
             return miss();
         }
