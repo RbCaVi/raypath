@@ -315,7 +315,7 @@ hit pathtrace6(ray r) {
 
 float sdf2(vec3 pos) {
     vec3 r = mod(pos, 0.5) - vec3(0.25, 0.25, 0.25);
-    return sqrt(dot(r, r)) - 0.2;
+    return sqrt(dot(r, r)) - 0.1;
 }
 
 hit raymarch2(ray r, float mindist, float maxdist) {
