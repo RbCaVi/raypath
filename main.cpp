@@ -160,7 +160,7 @@ int main()
         // seconds since start
         setFloat(shader, "time", currentFrame);
         // fps meter
-        setFloat(shader, "fps", 1.0 / (totdt / dtlen));
+        setFloat(shader, "fps", dtlen / totdt );
         // fov (perspective or ortho)
         setFloat(shader, "fov", fov);
         // show distance or real color
