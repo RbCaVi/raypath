@@ -20,10 +20,11 @@ all: main
 	 $(compilecmdc) -Wno-pedantic -c $< -o $@
 
 main.o:
-shader.o:
+shader.o: shader.h
+gen.o: gen.h
 glad.o:
 
-main: main.o shader.o glad.o
+main: main.o shader.o glad.o gen.o
 	$(linkcmd) $^ \
 	-lSDL2 -lSDL2_image \
 	-lGL -lGLEW \
