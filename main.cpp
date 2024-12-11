@@ -85,13 +85,16 @@ int main()
     fragstream
         << load(currentPath / "shaders/shaderpre.fs")
         << "\n"
-        << plane(new defaultmaterial()).render()
+        << plane(new showuvmaterial(), new vec3_const(0.0, 0.0, 3.0), new vec3_const(1.0, 0.0, 0.0), new vec3_const(1.0, 1.0, 0.0)).render()
+        << plane(new showuvmaterial(), new vec3_const(3.0, 3.0, 3.0), new vec3_const(0.0, -1.0, 1.0), new vec3_const(1.0, 0.0, 0.0)).render()
         << "\n"
         << "vec3 castray(ray r) {\n"
         << "    vec3 color = vec3(0.0);\n"
         << "    vec3 factor = vec3(1.0);\n"
         << "    for (int i = 0; i < 10; i++) {\n"
-        << "        hit h = pathtrace0(r);\n"
+        << "        hit h1 = pathtrace0(r, 1e100);\n"
+        << "        hit h2 = merge_hits(pathtrace1(r, h1.dist), h1);\n"
+        << "        hit h = h2;\n"
         << "        if (showdist) {\n"
         << "            color = vec3(mod(h.dist * sqrt(dot(r.dir, r.dir)), 0.2) * 5);\n"
         << "            break;\n"
