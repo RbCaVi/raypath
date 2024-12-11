@@ -4,7 +4,7 @@
 
 static int counter = 0;
 
-static int id() {
+static int getid() {
 	return counter++;
 }
 
@@ -18,25 +18,31 @@ std::string vec3_const::render() {
 	return stream.str();
 }
 
-thing::thing(material *mat) : mat(mat) {}
+thing::thing(material *mat) : mat(mat), id(getid()) {}
 
 std::string defaultmaterial::render() {
 	std::stringstream stream;
 
+	stream << "return vec3(0.0, 0.0, 0.0);\n";
+
 	return stream.str();
 }
 
-plane::plane(material *mat) : thing(mat) {}
+std::string showuvmaterial::render() {
+	std::stringstream stream;
+
+	stream << "return noreflect(t, vec3(mod(u, 1.0), mod(v, 1.0), 0.0));\n";
+
+	return stream.str();
+}
+
+plane::plane(material *mat, vec3 *center, vec3 *u, vec3 *v) : thing(mat), center(center), u(u), v(v) {}
 
 std::string plane::render() {
-	vec3 *center = new vec3_const(0.0, 0.0, 3.0);
-	vec3 *u = new vec3_const(1.0, 0.0, 0.0);
-	vec3 *v = new vec3_const(1.0, 1.0, 0.0);
-
 	std::stringstream stream;
 
 	stream
-		<< "hit pathtrace" << id() << "(ray r) {\n"
+		<< "hit pathtrace" << id << "(ray r, float mindist) {\n"
 		<< "    // plane intersection\n"
 		<< "    vec3 planecenter = " << center->render() << ";\n"
 		<< "    vec3 planev1 = " << u->render() << ";\n"
@@ -47,7 +53,7 @@ std::string plane::render() {
 		<< "    float D = dot(normal, planecenter);\n"
 		<< "\n"
 		<< "    float denom = dot(normal, r.dir);\n"
-
+		<< "\n"
 		<< "    if (abs(denom) < 1e-8) {\n"
 		<< "        return miss();\n"
 		<< "    }\n"
@@ -58,15 +64,19 @@ std::string plane::render() {
 		<< "        return miss();\n"
 		<< "    }\n"
 		<< "\n"
+		<< "    if (mindist > 0 && t > mindist) {\n"
+		<< "        return miss();\n"
+		<< "    }\n"
+		<< "\n"
 		<< "    vec3 intersection = at(r, t);\n"
 		<< "    vec3 w = n / dot(n,n);\n"
 		<< "\n"
 		<< "    vec3 P = intersection;\n"
 		<< "\n"
-		<< "    float a = dot(w, cross(P, planev2));\n"
-		<< "    float b = dot(w, cross(planev1, P));\n"
+		<< "    float u = dot(w, cross(P, planev2));\n"
+		<< "    float v = dot(w, cross(planev1, P));\n"
 		<< "\n"
-		<< "    return noreflect(t, vec3(1-mod(time, 1.0), mod(a, 1.0), mod(b, 1.0)));\n"
+		<< "    " << mat->render() << "\n"
 		<< "}\n";
 
 	return stream.str();

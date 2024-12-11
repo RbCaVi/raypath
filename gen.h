@@ -46,6 +46,7 @@ public:
 class thing {
 public:
 	material *mat;
+	int id;
 
 	thing(material *mat);
 
@@ -111,7 +112,7 @@ MATERIAL(maskmaterial,
 )
 
 THING(plane, 
-    plane(material *mat);
+    plane(material *mat, vec3 *center, vec3 *u, vec3 *v);
 )
 
 THING(sphere, 
