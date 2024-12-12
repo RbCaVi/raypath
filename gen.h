@@ -28,6 +28,16 @@ public:
 	std::string render() override;
 };
 
+class mask {
+public:
+	virtual std::string render() = 0;
+};
+
+class sdf {
+public:
+	virtual std::string render() = 0;
+};
+
 class material {
 public:
 	virtual std::string render() = 0;
@@ -57,6 +67,7 @@ public: \
 };
 
 MATERIAL(defaultmaterial, 
+    // black
     defaultmaterial();
 )
 
@@ -77,9 +88,26 @@ MATERIAL(colormaterial,
 )
 
 MATERIAL(raymarchmaterial, 
-    // the object you put this on is the bounding shape of the raymarched object - needs tmin and tmax instead of just t - right now, just box has this
+    // the object you put this on is the bounding shape of the raymarched object - needs tmin and tmax instead of just t - right now, only box has this
     // mat is the material of the raymarched object
     raymarchmaterial(sdf *shape, material *mat);
+)
+
+MATERIAL(passthroughmaterial, 
+    // lets a ray pass through it - by returning a hit with reflection
+    // "only" useful with maskmaterial
+    passthroughmaterial();
+)
+
+MATERIAL(missmaterial, 
+    // lets a ray pass through it - by returning a miss - no seeing the inside
+    // "only" useful with maskmaterial
+    passthroughmaterial();
+)
+
+MATERIAL(maskmaterial, 
+    // return m1 if the hit is inside the mask (or various other boolean conditions)
+    maskmaterial(mask *shape, material *m1, material *m2);
 )
 
 THING(plane, 
