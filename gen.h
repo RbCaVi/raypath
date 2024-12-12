@@ -19,11 +19,6 @@ public:
 	virtual std::string render() = 0;
 };
 
-class defaultmaterial : public material {
-public:
-	std::string render() override;
-};
-
 class thing {
 public:
 	material *mat;
@@ -33,9 +28,24 @@ public:
 	virtual std::string render() = 0;
 };
 
-class plane : public thing {
-public:
-	plane(material *mat);
-
-	std::string render() override;
+#define MATERIAL(name, constructors) \
+class name : public material { \
+public: \
+    constructors \
+	std::string render() override; \
 };
+
+#define THING(name, constructors) \
+class name : public thing { \
+public: \
+    constructors \
+	std::string render() override; \
+};
+
+MATERIAL(defaultnaterial, 
+    defaultmaterial();
+)
+
+THING(plane, 
+    plane(material *mat);
+)
