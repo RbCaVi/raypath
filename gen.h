@@ -14,6 +14,20 @@ public:
 	std::string render() override;
 };
 
+class number {
+public:
+	virtual std::string render() = 0;
+};
+
+class number_const : public number {
+public:
+	float value;
+
+	number_const(float value);
+
+	std::string render() override;
+};
+
 class material {
 public:
 	virtual std::string render() = 0;
@@ -48,4 +62,8 @@ MATERIAL(defaultnaterial,
 
 THING(plane, 
     plane(material *mat);
+)
+
+THING(sphere, 
+    sphere(material *mat, vec3 *center, number *radius);
 )
