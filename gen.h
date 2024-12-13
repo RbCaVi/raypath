@@ -115,9 +115,15 @@ THING(plane,
 )
 
 THING(sphere, 
+    vec3 *center;
+    number *radius;
+
     sphere(material *mat, vec3 *center, number *radius);
 )
 
 THING(box, 
+    vec3 *corner1;
+    vec3 *corner2;
+
     box(material *mat, vec3 *corner1, vec3 *corner2);
 )

@@ -71,3 +71,7 @@ std::string plane::render() {
 
 	return stream.str();
 }
+
+sphere::sphere(material *mat, vec3 *center, number *radius) : thing(mat), center(center), radius(radius) {}
+
+box::box(material *mat, vec3 *corner1, vec3 *corner2) : thing(mat), corner1(corner1), corner2(corner2) {}
