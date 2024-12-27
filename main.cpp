@@ -312,14 +312,14 @@ int main()
         // 
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_Z] == 1) {
             fov += 0.02;
-            if (fov > 1.0) {
-                fov = 1.0;
+            if (fov > 1.2) {
+                fov = 1.2;
             }
         }
         if (SDL_GetKeyboardState(NULL)[SDL_SCANCODE_X] == 1) {
             fov -= 0.02;
-            if (fov < 0.0) {
-                fov = 0.0;
+            if (fov < -0.2) {
+                fov = -0.2;
             }
         }
 
