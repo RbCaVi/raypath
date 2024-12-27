@@ -49,7 +49,8 @@ int main()
     // Setting up the paths
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::filesystem::path vertexPath = currentPath / "shaders/shader.vs";
-    std::filesystem::path fragPath = currentPath / "shaders/shader.fs";
+    std::filesystem::path fragPrePath = currentPath / "shaders/shaderpre.fs";
+    std::filesystem::path fragPostPath = currentPath / "shaders/shaderpost.fs";
     std::filesystem::path iconPath = currentPath / "assets/icon.png";
 
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
@@ -83,7 +84,7 @@ int main()
 
     std::stringstream fragstream;
     fragstream
-        << load(currentPath / "shaders/shaderpre.fs")
+        << loadFile(fragPrePath)
         << "\n"
         << plane(new showuvmaterial(), new vec3_const(0.0, 0.0, 3.0), new vec3_const(1.0, 0.0, 0.0), new vec3_const(1.0, 1.0, 0.0)).render()
         << plane(new showuvmaterial(), new vec3_const(3.0, 3.0, 3.0), new vec3_const(0.0, -1.0, 1.0), new vec3_const(1.0, 0.0, 0.0)).render()
@@ -110,7 +111,7 @@ int main()
         << "    return color;\n"
         << "}\n"
         << "\n"
-        << load(currentPath / "shaders/shaderpost.fs");
+        << loadFile(fragPostPath);
 
     // compile the shader
     unsigned int shader = compileShader(loadFile(vertexPath), fragstream.str().c_str());
