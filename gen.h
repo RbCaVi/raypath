@@ -103,7 +103,7 @@ MATERIAL(passthroughmaterial,
 MATERIAL(missmaterial, 
     // lets a ray pass through it - by returning a miss - no seeing the inside
     // "only" useful with maskmaterial
-    passthroughmaterial();
+    missmaterial();
 )
 
 MATERIAL(maskmaterial, 
